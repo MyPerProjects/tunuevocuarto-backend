@@ -27,12 +27,13 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Req() req: any, @Res() res: any) {
     const result = await this.authService.validateGoogleUser(req.user);
-
-    // EXTRAEMOS EL TOKEN (Asegúrate que result.accessToken sea el nombre correcto)
     const token = result.access_token;
 
-    // REDIRIGIMOS AL FRONTEND PASANDO EL TOKEN
-    return res.redirect(`http://localhost:4200/dashboard?token=${token}`);
+    // 👇 CONFIGURA LA REDIRECCIÓN DINÁMICA AQUÍ
+    const frontendUrl =
+      process.env.FRONTEND_REDIRECT_URL || 'http://localhost:4200/dashboard';
+
+    return res.redirect(`${frontendUrl}?token=${token}`);
   }
 
   @ApiBearerAuth('access-token')
