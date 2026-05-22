@@ -33,11 +33,19 @@ export class WhatsappService {
         }),
         puppeteer: {
           headless: true, // Forzamos ejecución eficiente en segundo plano
-          protocolTimeout: 60000, // MEJORA: Damos 60 segundos de tolerancia a Puppeteer para evitar el freeze
+          protocolTimeout: 90000, // MEJORA: Subimos a 90s para dar holgura en la nube y evitar congelamientos
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-programmatic-navigation',
+            // 👇 FLAGS DE OPTIMIZACIÓN EXCLUSIVOS PARA PRODUCCIÓN (ORACLE CLOUD MICRO)
+            '--disable-dev-shm-usage', // Evita colapsos usando la memoria compartida del sistema operativo
+            '--disable-accelerated-2d-canvas', // Desactiva renderizado innecesario de gráficos 2D
+            '--disable-gpu', // Apaga el uso de tarjeta gráfica inexistente en el servidor virtual
+            '--no-first-run', // Evita tareas pesadas de configuración inicial de Chrome
+            '--no-zygote', // Desactiva subprocesos redundantes de Linux para ahorrar RAM
+            '--single-process', // Fuerza a correr todo en un único hilo reduciendo el consumo de CPU
+            '--disable-audio-output', // Apaga completamente el sistema de audio de WhatsApp Web
           ],
           handleSIGINT: false,
           handleSIGTERM: false,
@@ -118,7 +126,6 @@ export class WhatsappService {
         client.removeAllListeners('incoming_call');
         client.removeAllListeners('auth_failure');
         client.removeAllListeners('ready');
-        // Dejamos que la cola de ejecución ignore eventos huérfanos de Puppeteer
       } catch (e) {}
 
       setTimeout(async () => {
