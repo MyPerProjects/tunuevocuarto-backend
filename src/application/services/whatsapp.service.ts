@@ -32,20 +32,19 @@ export class WhatsappService {
           clientId: `session_user_${userId}`,
         }),
         puppeteer: {
-          headless: true, // Forzamos ejecución eficiente en segundo plano
-          protocolTimeout: 90000, // MEJORA: Subimos a 90s para dar holgura en la nube y evitar congelamientos
+          headless: true,
+          protocolTimeout: 90000,
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-programmatic-navigation',
-            // 👇 FLAGS DE OPTIMIZACIÓN EXCLUSIVOS PARA PRODUCCIÓN (ORACLE CLOUD MICRO)
-            '--disable-dev-shm-usage', // Evita colapsos usando la memoria compartida del sistema operativo
-            '--disable-accelerated-2d-canvas', // Desactiva renderizado innecesario de gráficos 2D
-            '--disable-gpu', // Apaga el uso de tarjeta gráfica inexistente en el servidor virtual
-            '--no-first-run', // Evita tareas pesadas de configuración inicial de Chrome
-            '--no-zygote', // Desactiva subprocesos redundantes de Linux para ahorrar RAM
-            '--single-process', // Fuerza a correr todo en un único hilo reduciendo el consumo de CPU
-            '--disable-audio-output', // Apaga completamente el sistema de audio de WhatsApp Web
+            '--disable-dev-shm-usage', // Obliga a usar la RAM del sistema en vez de /dev/shm
+            '--disable-accelerated-2d-canvas',
+            '--disable-gpu',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-extensions',
+            '--disable-audio-output',
           ],
           handleSIGINT: false,
           handleSIGTERM: false,
