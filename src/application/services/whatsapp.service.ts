@@ -72,7 +72,7 @@ export class WhatsappService {
   private setupClientListeners(userId: number, state: SessionState) {
     const { client } = state;
 
-    client.on('qr', (qr) => {
+    client.on('qr', async (qr) => {
       state.latestQr = qr;
       state.connectionStatus = 'DISCONNECTED';
       state.isReady = false;
@@ -82,11 +82,12 @@ export class WhatsappService {
       );
       qrcode.generate(qr, { small: true });
 
-      this.whatsappGateway.emitStatus({ userId, status: 'DISCONNECTED' });
-      this.whatsappGateway.emitQrCode({ userId, qr });
+      // Agregamos await si estos métodos van a la DB internamente
+      await this.whatsappGateway.emitStatus({ userId, status: 'DISCONNECTED' });
+      await this.whatsappGateway.emitQrCode({ userId, qr });
     });
 
-    client.on('ready', () => {
+    client.on('ready', async () => {
       state.latestQr = '';
       state.connectionStatus = 'CONNECTED';
       state.isReady = true;
@@ -94,7 +95,9 @@ export class WhatsappService {
       this.logger.log(
         `¡Conexión exitosa! El WhatsApp del usuario ${userId} está listo.`,
       );
-      this.whatsappGateway.emitStatus({ userId, status: 'CONNECTED' });
+
+      // COLOCAMOS AWAIT AQUÍ PARA ASÍ ELIMINAR EL DEPRECATION WARNING DE PG
+      await this.whatsappGateway.emitStatus({ userId, status: 'CONNECTED' });
     });
 
     client.on('auth_failure', (msg) => {
