@@ -68,7 +68,7 @@ async function bootstrap() {
 
   // Obtenemos la URL real para el log
   const url = await app.getUrl();
-  logger.log(`Application is running on: ${url}/api`);
+  logger.log(`Application is running on: ${url}`);
 }
 
 bootstrap();
