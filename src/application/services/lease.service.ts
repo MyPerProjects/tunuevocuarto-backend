@@ -123,8 +123,8 @@ export class LeaseService {
         tenantName: lease.tenant.firstName,
         unitNumber: lease.unit.unitNumber,
         monthlyRent: Number(lease.monthlyRent),
-        yapeNumber: owner?.yapeNumber || '922797101',
-        bcpAccount: owner?.bcpAccount || '19115314151314',
+        yapeNumber: owner?.yapeNumber || '',
+        bcpAccount: owner?.bcpAccount || '',
         isAutomaticCron: false,
       });
 

@@ -74,13 +74,12 @@ export class LeaseTaskService {
           lease.paymentStatus = 'pendiente';
           await this.leaseRepo.ormRepository.save(lease);
 
-          // Construimos el mensaje de forma elegante llamando al Helper Centralizado
           const message = WhatsappTemplatesHelper.getPendingPaymentMessage({
             tenantName: lease.tenant.firstName,
             unitNumber: lease.unit?.unitNumber || 'N/A',
             monthlyRent: Number(lease.monthlyRent),
-            yapeNumber: owner?.yapeNumber || '922797101',
-            bcpAccount: owner?.bcpAccount || '19115314151314',
+            yapeNumber: owner?.yapeNumber || '',
+            bcpAccount: owner?.bcpAccount || '',
             isAutomaticCron: true,
           });
 
